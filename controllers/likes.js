@@ -5,7 +5,7 @@ const {
   INVALID_DATA_ERROR,
 } = require("../utils/errors");
 
-// Like Itemgi
+// Like Item
 const likeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
