@@ -7,7 +7,7 @@ const {
 
 // Get all clothing items
 const getClothingItems = (req, res) => {
-  ClothingItem.find({})
+  ClothingItem.find()
     .then((items) => {
       res.send(items);
     })
@@ -42,7 +42,10 @@ const createNewClothingItem = (req, res) => {
 const deleteClothingItem = (req, res) => {
   ClothingItem.findByIdAndDelete(req.params.itemId)
     .then((deletedItem) => {
-      res.send({
+      if (!deletedItem) {
+        return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+      }
+      return res.send({
         message: `Item: ${deletedItem._id} deleted successfully`,
       });
     })
