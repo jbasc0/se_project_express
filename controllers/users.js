@@ -9,9 +9,6 @@ const {
 const getUsers = (req, res) => {
   User.find()
     .then((users) => {
-      if (!users.length) {
-        return res.status(NOT_FOUND_ERROR).send({ message: "Users not found" });
-      }
       return res.send(users);
     })
     .catch((err) => {

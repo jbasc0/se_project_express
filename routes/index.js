@@ -8,6 +8,8 @@ const clothingItems = require("./clothingItems");
 
 const likes = require("./likes");
 
+const { NOT_FOUND_ERROR } = require("../utils/errors");
+
 router.use("/", users);
 
 router.use("/", clothingItems);
@@ -16,7 +18,7 @@ router.use("/", likes);
 
 // Handle non-existent resource
 router.use((req, res) => {
-  res.status(404).json({ message: "Requested resource not found" });
+  res.status(NOT_FOUND_ERROR).json({ message: "Requested resource not found" });
 });
 
 module.exports = router;

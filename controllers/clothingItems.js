@@ -9,10 +9,7 @@ const {
 const getClothingItems = (req, res) => {
   ClothingItem.find()
     .then((items) => {
-      if (!items.length) {
-        return res.status(NOT_FOUND_ERROR).send({ message: "Items not found" });
-      }
-      return res.status(200).send(items);
+      return res.send(items);
     })
     .catch((err) => {
       console.error(err);
@@ -26,20 +23,8 @@ const getClothingItems = (req, res) => {
 const createNewClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
 
-  if (!name || !weather || !imageUrl) {
-    return res
-      .status(INVALID_DATA_ERROR)
-      .send({ message: "Name, weather, and imageUrl are required" });
-  }
-
-  if (name.length < 2 || name.length > 30) {
-    return res
-      .status(INVALID_DATA_ERROR)
-      .send({ message: "Name must be between 2 and 30 characters long" });
-  }
-
-  ClothingItem.create({ name, weather, imageUrl })
-    .then((newItem) => res.status(201).send(newItem))
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
+    .then((newItem) => res.send(newItem))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -55,15 +40,8 @@ const createNewClothingItem = (req, res) => {
 
 // Delete clothing item
 const deleteClothingItem = (req, res) => {
-  if (!req.params.itemId) {
-    return res.status(INVALID_DATA_ERROR).send({ message: "Invalid Data" });
-  }
-
   ClothingItem.findByIdAndDelete(req.params.itemId)
     .then((deletedItem) => {
-      if (!deletedItem) {
-        return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
-      }
       return res.send({
         message: `Item: ${deletedItem._id} deleted successfully`,
       });
