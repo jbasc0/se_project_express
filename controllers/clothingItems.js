@@ -12,7 +12,7 @@ const getClothingItems = (req, res) => {
       if (!items.length) {
         return res.status(NOT_FOUND_ERROR).send({ message: "Items not found" });
       }
-      return res.send(items);
+      return res.status(200).send(items);
     })
     .catch((err) => {
       console.error(err);
@@ -38,7 +38,7 @@ const createNewClothingItem = (req, res) => {
       .send({ message: "Name must be between 2 and 30 characters long" });
   }
 
-  return ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl })
     .then((newItem) => res.status(201).send(newItem))
     .catch((err) => {
       console.error(err);
@@ -59,7 +59,7 @@ const deleteClothingItem = (req, res) => {
     return res.status(INVALID_DATA_ERROR).send({ message: "Invalid Data" });
   }
 
-  return ClothingItem.findByIdAndDelete(req.params.itemId)
+  ClothingItem.findByIdAndDelete(req.params.itemId)
     .then((deletedItem) => {
       if (!deletedItem) {
         return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
