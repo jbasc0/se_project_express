@@ -45,7 +45,7 @@ const dislikeItem = (req, res) => {
   )
     .orFail()
     .then((updatedItem) => {
-      res.json({
+      res.send({
         message: `Item with ID ${updatedItem._id} disliked successfully`,
       });
     })
