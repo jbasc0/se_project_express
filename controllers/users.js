@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
   INVALID_DATA_ERROR,
@@ -6,7 +8,6 @@ const {
   MONGO_ERROR,
   UNAUTHORIZED_ERROR,
 } = require("../utils/errors");
-const bcrypt = require("bcryptjs");
 const { JWT_SECRET } = require("../utils/config");
 
 // Get all users
@@ -54,7 +55,7 @@ const createUser = (req, res) => {
   }
 
   const hashedPassword = bcrypt.hash(password, 10);
-  User.create({ name, avatar, email, password: hashedPassword })
+  return User.create({ name, avatar, email, password: hashedPassword })
     .then((newUser) => res.status(201).send(newUser))
     .catch((err) => {
       console.error(err);
@@ -62,7 +63,8 @@ const createUser = (req, res) => {
         return res
           .status(INVALID_DATA_ERROR)
           .send({ message: "Invalid data provided" });
-      } else if (err.name === "MongoServerError") {
+      }
+      if (err.name === "MongoServerError") {
         return res
           .status(MONGO_ERROR)
           .send({ message: "Error on MongoDB Server" });

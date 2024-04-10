@@ -6,8 +6,6 @@ const users = require("./users");
 
 const clothingItems = require("./clothingItems");
 
-const likes = require("./likes");
-
 const { NOT_FOUND_ERROR } = require("../utils/errors");
 
 const { login, createUser } = require("../controllers/users");
@@ -17,8 +15,6 @@ const { middleware } = require("../middlewares/auth");
 router.use("/", middleware, users);
 
 router.use("/", clothingItems);
-
-router.use("/", likes);
 
 router.post("/signin", login);
 
