@@ -10,11 +10,19 @@ const likes = require("./likes");
 
 const { NOT_FOUND_ERROR } = require("../utils/errors");
 
-router.use("/", users);
+const { login, createUser } = require("../controllers/users");
+
+const { middleware } = require("../middlewares/auth");
+
+router.use("/", middleware, users);
 
 router.use("/", clothingItems);
 
 router.use("/", likes);
+
+router.post("/signin", login);
+
+router.post("/signup", createUser);
 
 // Handle non-existent resource
 router.use((req, res) => {
