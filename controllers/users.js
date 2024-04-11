@@ -19,7 +19,7 @@ const createUser = (req, res) => {
       .send({ message: "Email or password is invalid" });
   }
 
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
       User.create({ name, avatar, email, password: hashedPassword }),
@@ -103,7 +103,7 @@ const updateProfile = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(INVALID_DATA_ERROR).send({ message: "Invalid data" });
       }
-      res
+      return res
         .status(SERVER_ERROR)
         .json({ message: "An error has occurred on the server" });
     });

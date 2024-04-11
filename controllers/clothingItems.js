@@ -51,7 +51,7 @@ const deleteClothingItem = (req, res) => {
       }
       return item.deleteOne().then(() =>
         res.send({
-          message: `Item: ${deletedItem._id} deleted successfully`,
+          message: `Item: ${item._id} deleted successfully`,
         }),
       );
     })
