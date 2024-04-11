@@ -41,14 +41,19 @@ const createNewClothingItem = (req, res) => {
 
 // Delete clothing item
 const deleteClothingItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
-    .then((deletedItem) => {
-      if (!deletedItem.owner.equals(req.user._id)) {
-        return res.status(FORBIDDEN_ERROR).send({ message: "Forbidden error" });
+  ClothingItem.findById(req.params.itemId)
+    .orFail()
+    .then((item) => {
+      if (!item.owner !== req.user._id) {
+        return res
+          .status(FORBIDDEN_ERROR)
+          .send({ message: "You are not authorized to delete this item" });
       }
-      return res.send({
-        message: `Item: ${deletedItem._id} deleted successfully`,
-      });
+      return item.deleteOne().then(() =>
+        res.send({
+          message: `Item: ${deletedItem._id} deleted successfully`,
+        }),
+      );
     })
     .catch((err) => {
       console.error(err);

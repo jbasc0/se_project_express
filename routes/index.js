@@ -12,13 +12,13 @@ const { login, createUser } = require("../controllers/users");
 
 const { middleware } = require("../middlewares/auth");
 
-router.use("/", middleware, users);
-
-router.use("/", clothingItems);
-
 router.post("/signin", login);
 
 router.post("/signup", createUser);
+
+router.use("/", clothingItems);
+
+router.use("/", middleware, users);
 
 // Handle non-existent resource
 router.use((req, res) => {

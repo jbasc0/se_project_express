@@ -10,41 +10,6 @@ const {
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
-// Get all users
-const getUsers = (req, res) => {
-  User.find()
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
-
-// Get a user by ID
-const getUser = (req, res) => {
-  User.findById(req.params.userId)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_ERROR).send({ message: "User not found" });
-      }
-      if (err.name === "CastError") {
-        return res
-          .status(INVALID_DATA_ERROR)
-          .send({ message: "Invalid user ID" });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
-
 // Create a new user
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -54,8 +19,11 @@ const createUser = (req, res) => {
       .send({ message: "Email or password is invalid" });
   }
 
-  const hashedPassword = bcrypt.hash(password, 10);
-  return User.create({ name, avatar, email, password: hashedPassword })
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) =>
+      User.create({ name, avatar, email, password: hashedPassword }),
+    )
     .then((newUser) => res.status(201).send(newUser))
     .catch((err) => {
       console.error(err);
@@ -67,7 +35,7 @@ const createUser = (req, res) => {
       if (err.name === "MongoServerError") {
         return res
           .status(MONGO_ERROR)
-          .send({ message: "Error on MongoDB Server" });
+          .send({ message: "Error on MongoDB Server or duplicate email" });
       }
       return res
         .status(SERVER_ERROR)
@@ -90,7 +58,7 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        res
+        return res
           .status(UNAUTHORIZED_ERROR)
           .send({ message: "Incorrect email or password" });
       }
@@ -133,7 +101,7 @@ const updateProfile = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(INVALID_DATA_ERROR).send({ message: "Invalid data" });
+        return res.status(INVALID_DATA_ERROR).send({ message: "Invalid data" });
       }
       res
         .status(SERVER_ERROR)
@@ -142,8 +110,6 @@ const updateProfile = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
-  getUser,
   createUser,
   login,
   getCurrentUser,

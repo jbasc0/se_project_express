@@ -18,9 +18,9 @@ router.post("/items", middleware, createNewClothingItem);
 router.delete("/items/:itemId", middleware, deleteClothingItem);
 
 // Likes a clothing item
-router.put("/:itemsId/likes", middleware, likeItem);
+router.put("/items/itemId/likes", middleware, likeItem);
 
 // Dislikes a clothing item
-router.delete("/:itemsId/likes", middleware, dislikeItem);
+router.delete("/items/itemId/likes", middleware, dislikeItem);
 
 module.exports = router;
