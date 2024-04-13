@@ -25,13 +25,11 @@ const createUser = (req, res) => {
       User.create({ name, avatar, email, password: hashedPassword }),
     )
     .then((newUser) =>
-      res
-        .status(201)
-        .send({
-          name: newUser.name,
-          avatar: newUser.avatar,
-          email: newUser.email,
-        }),
+      res.status(201).send({
+        name: newUser.name,
+        avatar: newUser.avatar,
+        email: newUser.email,
+      }),
     )
     .catch((err) => {
       console.error(err);
@@ -65,6 +63,9 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      if (err.name === "ValidationError") {
+        return res.status(INVALID_DATA_ERROR).send({ message: "Invalid data" });
+      }
       if (err.message === "Incorrect email or password") {
         return res
           .status(UNAUTHORIZED_ERROR)
