@@ -52,6 +52,11 @@ const createUser = (req, res) => {
 // Authenticate login
 const login = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(INVALID_DATA_ERROR)
+      .send({ message: "Email or password is invalid" });
+  }
 
   User.findUserByCredentials(email, password)
     .then((user) => {
