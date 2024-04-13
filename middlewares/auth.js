@@ -18,5 +18,6 @@ module.exports.middleware = (req, res, next) => {
     return res.status(UNAUTHORIZED_ERROR).send({ message: "Unauthorized" });
   }
 
-  return (req.user = payload);
+  req.user = payload;
+  return next(req.user);
 };
