@@ -20,4 +20,5 @@ module.exports.middleware = (req, res, next) => {
 
   req.user = payload;
   next();
+  return;
 };
