@@ -6,7 +6,7 @@ const {
   likeItem,
   dislikeItem,
 } = require("../controllers/clothingItems");
-const { middleware } = require("../middlewares/auth");
+// const { middleware } = require("../middlewares/auth");
 const {
   createItemValidation,
   idValidation,

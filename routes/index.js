@@ -6,7 +6,7 @@ const users = require("./users");
 
 const clothingItems = require("./clothingItems");
 
-const { NOT_FOUND_ERROR } = require("../utils/errors");
+// const { NOT_FOUND_ERROR } = require("../utils/errors");
 
 const { login, createUser } = require("../controllers/users");
 

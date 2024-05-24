@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const BadRequestError = require("../utils/errors/BadRequestError");
 const ConflictError = require("../utils/errors/ConflictError");
-const ForbiddenError = require("../utils/errors/ForbiddenError");
 const NotFoundError = require("../utils/errors/NotFoundError");
 const UnauthorizedError = require("../utils/errors/UnauthorizedError");
 // const {
@@ -28,9 +27,9 @@ const createUser = (req, res) => {
 
   return bcrypt
     .hash(password, 10)
-    .then((hashedPassword) =>
-      User.create({ name, avatar, email, password: hashedPassword }),
-    )
+    .then((hashedPassword) => {
+      User.create({ name, avatar, email, password: hashedPassword });
+    })
     .then((newUser) =>
       res.status(201).send({
         name: newUser.name,

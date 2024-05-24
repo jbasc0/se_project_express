@@ -6,10 +6,8 @@ const ClothingItem = require("../models/clothingItem");
 //   FORBIDDEN_ERROR,
 // } = require("../utils/errors");
 const BadRequestError = require("../utils/errors/BadRequestError");
-const ConflictError = require("../utils/errors/ConflictError");
 const ForbiddenError = require("../utils/errors/ForbiddenError");
 const NotFoundError = require("../utils/errors/NotFoundError");
-const UnauthorizedError = require("../utils/errors/UnauthorizedError");
 
 // Get all clothing items
 const getClothingItems = (req, res) => {
