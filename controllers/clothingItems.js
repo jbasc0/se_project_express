@@ -14,9 +14,10 @@ const getClothingItems = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
+      // return res
+      //   .status(SERVER_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -29,13 +30,17 @@ const createNewClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(INVALID_DATA_ERROR)
-          .send({ message: "Invalid data provided" });
+        next(new BadRequestError("Invalid data"));
+      } else {
+        next(err);
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      //   return res
+      //     .status(INVALID_DATA_ERROR)
+      //     .send({ message: "Invalid data provided" });
+      // }
+      // return res
+      //   .status(SERVER_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -45,9 +50,10 @@ const deleteClothingItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
-        return res
-          .status(FORBIDDEN_ERROR)
-          .send({ message: "You are not authorized to delete this item" });
+        next(new ForbiddenError("You are not authorized to delete this item"));
+        // return res
+        //   .status(FORBIDDEN_ERROR)
+        //   .send({ message: "You are not authorized to delete this item" });
       }
       return item.deleteOne().then(() =>
         res.send({
@@ -58,16 +64,22 @@ const deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+        next(new NotFoundError("Item not found"));
+      } else if (err.name === "CastError") {
+        next(new BadRequestError("Invalid data"));
+      } else {
+        next(err);
       }
-      if (err.name === "CastError") {
-        return res
-          .status(INVALID_DATA_ERROR)
-          .send({ message: "Invalid item ID" });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      //   return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+      // }
+      // if (err.name === "CastError") {
+      //   return res
+      //     .status(INVALID_DATA_ERROR)
+      //     .send({ message: "Invalid item ID" });
+      // }
+      // return res
+      //   .status(SERVER_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -83,22 +95,30 @@ const likeItem = (req, res) => {
     .orFail()
     .then((updatedItem) => {
       res.send({
-        message: `Item with ID ${updatedItem._id} liked successfully`,
+        // message: `Item with ID ${updatedItem._id} liked successfully`,
+        updatedItem,
       });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+        next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(INVALID_DATA_ERROR)
-          .send({ message: "Invalid item ID" });
+        next(new BadRequestError("Invalid data"));
+      } else {
+        next(err);
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      //   return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+      // }
+      // if (err.name === "CastError") {
+      //   return res
+      //     .status(INVALID_DATA_ERROR)
+      //     .send({ message: "Invalid item ID" });
+      // }
+      // return res
+      //   .status(SERVER_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -112,22 +132,30 @@ const dislikeItem = (req, res) => {
     .orFail()
     .then((updatedItem) => {
       res.send({
-        message: `Item with ID ${updatedItem._id} disliked successfully`,
+        // message: `Item with ID ${updatedItem._id} disliked successfully`,
+        updatedItem,
       });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+        next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(INVALID_DATA_ERROR)
-          .send({ message: "Invalid item ID" });
+        next(new BadRequestError("Invalid data"));
+      } else {
+        next(err);
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      //   return res.status(NOT_FOUND_ERROR).send({ message: "Item not found" });
+      // }
+      // if (err.name === "CastError") {
+      //   return res
+      //     .status(INVALID_DATA_ERROR)
+      //     .send({ message: "Invalid item ID" });
+      // }
+      // return res
+      //   .status(SERVER_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
