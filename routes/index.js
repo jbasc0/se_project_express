@@ -28,7 +28,7 @@ router.use("/", clothingItems);
 router.use("/", middleware, users);
 
 // Handle non-existent resource
-router.use((req, res) => {
+router.use((req, res, next) => {
   next(new NotFoundError("Requested resource not found"));
   // res.status(NOT_FOUND_ERROR).json({ message: "Requested resource not found" });
 });

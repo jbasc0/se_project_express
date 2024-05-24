@@ -6,7 +6,7 @@ const {
   likeItem,
   dislikeItem,
 } = require("../controllers/clothingItems");
-// const { middleware } = require("../middlewares/auth");
+const { middleware } = require("../middlewares/auth");
 const {
   createItemValidation,
   idValidation,
@@ -16,15 +16,15 @@ const {
 router.get("/items", getClothingItems);
 
 // Creates a new clothing item
-router.post("/items", createItemValidation, createNewClothingItem);
+router.post("/items", middleware, createItemValidation, createNewClothingItem);
 
 // Deletes a clothing item
-router.delete("/items/:itemId", idValidation, deleteClothingItem);
+router.delete("/items/:itemId", middleware, idValidation, deleteClothingItem);
 
 // Likes a clothing item
-router.put("/items/:itemId/likes", idValidation, likeItem);
+router.put("/items/:itemId/likes", middleware, idValidation, likeItem);
 
 // Dislikes a clothing item
-router.delete("/items/:itemId/likes", idValidation, dislikeItem);
+router.delete("/items/:itemId/likes", middleware, idValidation, dislikeItem);
 
 module.exports = router;

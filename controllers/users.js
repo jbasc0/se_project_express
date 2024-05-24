@@ -15,11 +15,10 @@ const UnauthorizedError = require("../utils/errors/UnauthorizedError");
 const { JWT_SECRET } = require("../utils/config");
 
 // Create a new user
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    next(new BadRequestError("Email or password is invalid"));
-    return;
+    return next(new BadRequestError("Email or password is invalid"));
     // return res
     //   .status(INVALID_DATA_ERROR)
     //   .send({ message: "Email or password is invalid" });
@@ -40,12 +39,13 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Invalid data provided"));
-      } else if (err.name === "MongoServerError") {
-        next(new ConflictError("Email is already registered"));
-      } else {
-        next(err);
+        return next(new BadRequestError("Invalid data provided"));
       }
+      if (err.name === "MongoServerError") {
+        return next(new ConflictError("Email is already registered"));
+      }
+      return next(err);
+
       //   return res
       //     .status(INVALID_DATA_ERROR)
       //     .send({ message: "Invalid data provided" });
@@ -62,11 +62,11 @@ const createUser = (req, res) => {
 };
 
 // Authenticate login
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(new BadRequestError("Email or password is invalid"));
-    return;
+    return next(new BadRequestError("Email or password is invalid"));
+
     // return res
     //   .status(INVALID_DATA_ERROR)
     //   .send({ message: "Email or password is invalid" });
@@ -83,27 +83,27 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Invalid data provided"));
-      } else if (err.message === "Incorrect email or password") {
-        next(new UnauthorizedError("Incorrect email or password"));
-      } else {
-        next(err);
-        //   return res.status(INVALID_DATA_ERROR).send({ message: "Invalid data" });
-        // }
-        // if (err.message === "Incorrect email or password") {
-        //   return res
-        //     .status(UNAUTHORIZED_ERROR)
-        //     .send({ message: "Incorrect email or password" });
-        // }
-        // return res
-        //   .status(SERVER_ERROR)
-        //   .json({ message: "An error has occurred on the server" });
+        return next(new BadRequestError("Invalid data provided"));
       }
+      if (err.message === "Incorrect email or password") {
+        return next(new UnauthorizedError("Incorrect email or password"));
+      }
+      return next(err);
+      //   return res.status(INVALID_DATA_ERROR).send({ message: "Invalid data" });
+      // }
+      // if (err.message === "Incorrect email or password") {
+      //   return res
+      //     .status(UNAUTHORIZED_ERROR)
+      //     .send({ message: "Incorrect email or password" });
+      // }
+      // return res
+      //   .status(SERVER_ERROR)
+      //   .json({ message: "An error has occurred on the server" });
     });
 };
 
 // get current user
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   return User.findById(userId)
     .orFail()
@@ -128,7 +128,7 @@ const getCurrentUser = (req, res) => {
 };
 
 // update current user
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     { _id: req.user._id },

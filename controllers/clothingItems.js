@@ -10,7 +10,7 @@ const ForbiddenError = require("../utils/errors/ForbiddenError");
 const NotFoundError = require("../utils/errors/NotFoundError");
 
 // Get all clothing items
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   ClothingItem.find()
     .then((items) => {
       res.send(items);
@@ -25,7 +25,7 @@ const getClothingItems = (req, res) => {
 };
 
 // Create new clothing item
-const createNewClothingItem = (req, res) => {
+const createNewClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
@@ -48,12 +48,14 @@ const createNewClothingItem = (req, res) => {
 };
 
 // Delete clothing item
-const deleteClothingItem = (req, res) => {
+const deleteClothingItem = (req, res, next) => {
   ClothingItem.findById(req.params.itemId)
     .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
-        next(new ForbiddenError("You are not authorized to delete this item"));
+        return next(
+          new ForbiddenError("You are not authorized to delete this item"),
+        );
         // return res
         //   .status(FORBIDDEN_ERROR)
         //   .send({ message: "You are not authorized to delete this item" });
@@ -87,7 +89,7 @@ const deleteClothingItem = (req, res) => {
 };
 
 // Like Item
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     {
@@ -126,7 +128,7 @@ const likeItem = (req, res) => {
 };
 
 // Dislike Item
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
